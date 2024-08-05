@@ -1,0 +1,191 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <cstdlib> // For system("cls")
+using namespace std;
+
+class Hostel {
+private:
+    string name;
+    int regNumber;
+    string bedType;
+    bool isPresent;
+    int bedno;
+    vector<Hostel> ve;
+
+public:
+    // Constructor to initialize hostel data
+    Hostel(string n, int r) {
+        name = n;
+        regNumber = r;
+        bedType = "";
+        isPresent = false;
+        bedno = 0;
+    }
+
+    // Function to allocate a room to a student
+    void allocateRoom(string bed) {
+        bedType = bed;
+    }
+
+    // Function to check room availability
+    bool bedStatus() {
+        if (bedno < 10) {   //here we are only taking the data of 10 students
+            bedno++;
+            return true;
+        }
+        return false;
+    }
+
+    // Function to add a new student to the hostel
+    void add(string n, int r) {
+        Hostel hostel(n, r); // Create a new hostel object for the student
+        ve.push_back(hostel); // Add the student to the vector of students
+        allocation(); // Allocate a room for the student
+    }
+
+    // Function to handle room allocation
+    void allocation() {
+        if (bedStatus()) {
+            cout << "You have been allocated a room in hostel" << endl << endl;
+        } else {
+            cout << "Hostel capacity reached. Cannot register more students." << endl << endl;
+        }
+    }
+
+    // Function to remove a student from the hostel
+    void remove() {
+        int rn;
+        cout << "Enter the registration number of the student who needs to be removed: ";
+        cin >> rn;
+        for (int i = 0; i < ve.size(); i++) {
+            if (rn == ve[i].regNumber) {
+                cout << "Student Name: " << ve[i].name << endl;
+                cout << "Registration Number: " << rn << endl;
+                ve.erase(ve.begin() + i); // Remove the student from the vector
+                cout << "Student is removed from hostel" << endl << endl;
+            }
+        }
+    }
+
+    // Function to display the list of students in the hostel
+    void display() {
+        for (int i = 0; i < ve.size(); i++) {
+            cout << i + 1 << ") Student Name: " << ve[i].name << endl;
+            cout << "Registration Number: " << ve[i].regNumber << endl << endl;
+        }
+    }
+
+    // Function to mark attendance for a student
+    void markAttendance(int regNum) {
+        for (int i = 0; i < ve.size(); i++) {
+            if (ve[i].regNumber == regNum) {
+                ve[i].isPresent = true;
+                break;
+            }
+        }
+    }
+
+    // Function to check if attendance is already marked for a student
+    bool isAttendanceMarked(int regNum) {
+        for (int i = 0; i < ve.size(); i++) {
+            if (ve[i].regNumber == regNum) {
+                return ve[i].isPresent;
+            }
+        }
+        return false;
+    }
+
+    // Function to get the bed type of a student
+    string getBedType(int regNum) {
+        for (int i = 0; i < ve.size(); i++) {
+            if (ve[i].regNumber == regNum) {
+                return ve[i].bedType;
+            }
+        }
+        return "";
+    }
+};
+
+int main() {
+    string n;
+    int r;
+    Hostel hostel("", 0); // Initialize hostel instance
+
+    cout << "Welcome to Hostel Management System!" << endl;
+    cout << "------------------------------------" << endl << endl;
+
+    while (true) {
+        cout << "Enter '1' to register a new student" << endl;
+        cout << "Enter '2' to choose the bed type " << endl;
+        cout << "Enter '3' to remove a student from the hostel" << endl;
+        cout << "Enter '4' to mark attendance" << endl;
+        cout << "Enter '5' to display students of the hostel" << endl;
+        cout << "Enter '0' to exit from the program" << endl;
+        cout << "Enter choice: ";
+
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                system("cls");
+                cout << "Enter student name: ";
+                cin >> n;
+                cout << "Enter registration number: ";
+                cin >> r;
+                cout << "Student registered successfully!" << endl;
+                hostel.add(n, r);
+                break;
+
+            case 2:
+                system("cls");
+                int regNum;
+                cout << "Enter student registration number: ";
+                cin >> regNum;
+                if (hostel.getBedType(regNum) == "") {
+                    string bedType;
+                    cout << "Choose bed type (Single/Double): ";
+                    cin >> bedType;
+                    hostel.allocateRoom(bedType);
+                    cout << "Room allocated successfully!" << endl;
+                } else {
+                    cout << "Room already allocated for this student!" << endl;
+                }
+                break;
+
+            case 3:
+                system("cls");
+                hostel.remove();
+                break;
+
+            case 4:
+                system("cls");
+                cout << "Enter student registration number: ";
+                cin >> regNum;
+                if (hostel.isAttendanceMarked(regNum)) {
+                    cout << "Attendance already marked for this student!" << endl;
+                } else {
+                    hostel.markAttendance(regNum);
+                    cout << "Attendance marked successfully!" << endl;
+                }
+                break;
+
+            case 5:
+                system("cls");
+                hostel.display();
+                break;
+
+            case 0:
+            cout << "Exiting Hostel Management System" << endl;
+            exit(0);
+
+            default:
+                system("cls");
+                cout << "Invalid input" << endl << endl;
+                break;
+        }
+    }
+
+    return 0;
+}
